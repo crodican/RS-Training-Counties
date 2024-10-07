@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import csv
 
 # List of URLs to check
 urls = [
@@ -120,8 +121,15 @@ def check_counties(url):
             return county
     return None
 
-# Iterate through the URLs and print those that mention the specified counties
-for url in urls:
-    county = check_counties(url)
-    if county:
-        print(f"Class found in {county} County: {url}")
+# Open a CSV file to write the results
+with open("classes_in_counties.csv", "w", newline='') as csvfile:
+    fieldnames = ['URL', 'County']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    
+    writer.writeheader()
+    for url in urls:
+        county = check_counties(url)
+        if county:
+            writer.writerow({'URL': url, 'County': county})
+
+print("Results have been saved to classes_in_counties.csv")
